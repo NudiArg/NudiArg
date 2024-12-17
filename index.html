@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario con Mapa</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 700px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<h2>Formulario de Registro con Mapa</h2>
+
+<!-- Mapa -->
+<div id="map"></div>
+
+<!-- Formulario de Google Forms -->
+<form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeN8q7yN_qIyO7eh2xDtmHOgUmQM96TtzkTtAUmBh4N_WVLTg/formResponse" method="POST" target="_self">
+    <label for="lat">Latitud:</label>
+    <input type="text" id="lat" name="entry.1591012667" readonly /><br><br> 
+
+    <label for="lng">Longitud:</label>
+    <input type="text" id="lng" name="entry.739565894" readonly /><br><br>  
+    <input type="submit" value="Enviar">
+</form>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    // Inicializa el mapa centrado en Argentina
+    var map = L.map('map').setView([-38.4161, -63.6167], 5);
+
+    // Cargar el mapa con OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Variable para almacenar las coordenadas
+    var lat, lng;
+
+    // Captura las coordenadas cuando el usuario hace clic en el mapa
+    map.on('click', function(e) {
+        lat = e.latlng.lat;
+        lng = e.latlng.lng;
+
+        // Muestra las coordenadas en los campos de entrada
+        document.getElementById('lat').value = lat;
+        document.getElementById('lng').value = lng;
+
+        // Almacena las coordenadas en localStorage
+        localStorage.setItem('lat', lat);
+        localStorage.setItem('lng', lng);
+    });
+
+    // Al enviar el formulario, verifica que las coordenadas estén en localStorage
+    document.getElementById('googleForm').onsubmit = function() {
+        var latFromStorage = localStorage.getItem('lat');
+        var lngFromStorage = localStorage.getItem('lng');
+
+        if (latFromStorage && lngFromStorage) {
+            document.getElementById('lat').value = latFromStorage;
+            document.getElementById('lng').value = lngFromStorage;
+        }
+
+        // El formulario se enviará automáticamente a Google Forms
+    };
+</script>
+
+</body>
+</html>
